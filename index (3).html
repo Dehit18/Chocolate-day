@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Happy Chocolate Day, Vanu 🍫</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --chocolate: #3C1518;
+    --dark-choc: #5C2E2E;
+    --caramel: #D4A056;
+    --cream: #FFF8F0;
+    --pink: #FF6B8A;
+    --gold: #FFD700;
+  }
+
+  body {
+    font-family: 'Baloo 2', cursive;
+    background: var(--chocolate);
+    overflow: hidden;
+    height: 100dvh;
+    width: 100vw;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* ===== INTRO SCREEN ===== */
+  #intro-screen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(165deg, #2C1810 0%, #1A0E0A 40%, #3C1518 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  #intro-screen.hidden {
+    opacity: 0;
+    transform: scale(1.1);
+    pointer-events: none;
+  }
+
+  .intro-date {
+    font-family: 'Quicksand', sans-serif;
+    color: var(--caramel);
+    font-size: 14px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .intro-title {
+    font-size: clamp(32px, 8vw, 56px);
+    color: var(--cream);
+    text-align: center;
+    line-height: 1.2;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+    text-shadow: 0 4px 30px rgba(212, 160, 86, 0.3);
+  }
+
+  .intro-subtitle {
+    font-family: 'Quicksand', sans-serif;
+    color: var(--caramel);
+    font-size: clamp(14px, 3.5vw, 18px);
+    margin-top: 16px;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+    padding: 0 20px;
+  }
+
+  .intro-cat-emoji {
+    font-size: 64px;
+    margin: 24px 0;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.2s forwards, catBounce 2s 2s infinite;
+  }
+
+  .intro-mission {
+    background: rgba(255, 248, 240, 0.08);
+    border: 1px solid rgba(212, 160, 86, 0.2);
+    border-radius: 16px;
+    padding: 16px 24px;
+    margin: 16px 20px;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.5s forwards;
+  }
+
+  .intro-mission p {
+    color: var(--cream);
+    font-size: clamp(13px, 3vw, 16px);
+    font-family: 'Quicksand', sans-serif;
+    line-height: 1.6;
+  }
+
+  .intro-mission .highlight {
+    color: var(--caramel);
+    font-weight: 700;
+  }
+
+  .intro-items-preview {
+    display: flex;
+    gap: 12px;
+    margin: 20px 0;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.8s forwards;
+  }
+
+  .preview-item {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    position: relative;
+  }
+
+  .preview-item.good {
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+  }
+
+  .preview-item.bad {
+    border: 2px solid rgba(255,255,255,0.1);
+    opacity: 0.5;
+  }
+
+  .preview-item .label {
+    position: absolute;
+    bottom: -18px;
+    font-size: 9px;
+    color: var(--caramel);
+    font-family: 'Quicksand', sans-serif;
+    white-space: nowrap;
+  }
+
+  .play-btn {
+    margin-top: 36px;
+    padding: 16px 48px;
+    background: linear-gradient(135deg, var(--caramel), #C4883A);
+    color: var(--chocolate);
+    font-family: 'Baloo 2', cursive;
+    font-size: 20px;
+    font-weight: 800;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    opacity: 0;
+    animation: fadeUp 0.8s 2.1s forwards;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(212, 160, 86, 0.4);
+  }
+
+  .play-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 30px rgba(212, 160, 86, 0.6);
+  }
+
+  .play-btn:active {
+    transform: scale(0.97);
+  }
+
+  /* ===== GAME SCREEN ===== */
+  #game-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, #1a0a2e 0%, #2d1b4e 30%, #1A0E0A 100%);
+  }
+
+  #game-screen.active {
+    display: block;
+  }
+
+  .game-bg-stars {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite alternate;
+  }
+
+  /* HUD */
+  .hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 100%);
+  }
+
+  .score-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .score-label {
+    color: var(--caramel);
+    font-size: 14px;
+    font-family: 'Quicksand', sans-serif;
+  }
+
+  .score-value {
+    color: var(--gold);
+    font-size: 28px;
+    font-weight: 800;
+    min-width: 50px;
+    transition: transform 0.15s;
+  }
+
+  .score-value.bump {
+    transform: scale(1.4);
+  }
+
+  .score-target {
+    color: rgba(255,248,240,0.4);
+    font-size: 16px;
+  }
+
+  .choco-progress {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .choco-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(212, 160, 86, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+
+  .choco-dot.filled {
+    background: rgba(212, 160, 86, 0.2);
+    border-color: var(--gold);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  }
+
+  /* GAME CANVAS */
+  .game-area {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  /* CAT PLAYER */
+  .cat-player {
+    position: absolute;
+    bottom: 20px;
+    width: 72px;
+    height: 72px;
+    transform: translateX(-50%);
+    z-index: 5;
+    transition: left 0.08s linear;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+  }
+
+  .cat-body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .cat-face {
+    width: 72px;
+    height: 72px;
+    background: #F5A623;
+    border-radius: 50%;
+    position: relative;
+    border: 3px solid #E09520;
+  }
+
+  .cat-ear {
+    position: absolute;
+    top: -14px;
+    width: 0;
+    height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-bottom: 22px solid #F5A623;
+  }
+  .cat-ear::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: -8px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 14px solid #FFB8C6;
+  }
+  .cat-ear.left { left: 4px; }
+  .cat-ear.right { right: 4px; }
+
+  .cat-eyes {
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 16px;
+  }
+
+  .cat-eye {
+    width: 14px;
+    height: 16px;
+    background: #2C1810;
+    border-radius: 50%;
+    position: relative;
+  }
+
+  .cat-eye::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    right: 2px;
+    width: 5px;
+    height: 5px;
+    background: white;
+    border-radius: 50%;
+  }
+
+  .cat-nose {
+    position: absolute;
+    top: 38px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 6px;
+    background: #FF8FA3;
+    border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+  }
+
+  .cat-mouth {
+    position: absolute;
+    top: 43px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 8px;
+    border-bottom: 2.5px solid #2C1810;
+    border-radius: 0 0 50% 50%;
+  }
+
+  .cat-whisker {
+    position: absolute;
+    top: 38px;
+    width: 24px;
+    height: 2px;
+    background: #2C1810;
+    border-radius: 2px;
+  }
+  .cat-whisker.l1 { left: -14px; transform: rotate(-8deg); }
+  .cat-whisker.l2 { left: -16px; top: 44px; transform: rotate(5deg); }
+  .cat-whisker.r1 { right: -14px; transform: rotate(8deg); }
+  .cat-whisker.r2 { right: -16px; top: 44px; transform: rotate(-5deg); }
+
+  .cat-basket {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 20px;
+    background: linear-gradient(180deg, #8B6914, #6B4F0E);
+    border-radius: 0 0 16px 16px;
+    border: 2px solid #A07818;
+    border-top: none;
+  }
+
+  /* FALLING ITEMS */
+  .falling-item {
+    position: absolute;
+    font-size: 40px;
+    z-index: 3;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+    will-change: transform;
+    line-height: 1;
+  }
+
+  /* CATCH EFFECTS */
+  .catch-effect {
+    position: absolute;
+    z-index: 20;
+    pointer-events: none;
+    animation: catchPop 0.6s ease forwards;
+  }
+
+  .catch-effect.good {
+    color: var(--gold);
+    font-size: 24px;
+    font-weight: 800;
+  }
+
+  .catch-effect.bad {
+    color: #FF6B6B;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .catch-effect.yuck {
+    color: #88CC88;
+    font-size: 18px;
+  }
+
+  /* ===== WIN SCREEN ===== */
+  #win-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  #win-screen.active {
+    display: flex;
+  }
+
+  .win-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(165deg, #2C1810 0%, #1A0E0A 40%, #3C1518 100%);
+    z-index: 0;
+  }
+
+  .win-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    max-width: 500px;
+    width: 100%;
+  }
+
+  .win-title {
+    font-size: clamp(28px, 7vw, 48px);
+    color: var(--gold);
+    text-shadow: 0 4px 30px rgba(255, 215, 0, 0.4);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .win-subtitle {
+    font-family: 'Quicksand', sans-serif;
+    color: var(--caramel);
+    font-size: clamp(14px, 3vw, 18px);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+    margin-bottom: 20px;
+  }
+
+  .dancing-cat-container {
+    width: clamp(180px, 50vw, 260px);
+    height: clamp(180px, 50vw, 260px);
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid var(--gold);
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.3), 0 0 80px rgba(255, 215, 0, 0.1);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards, dancePulse 2s 1.7s infinite;
+    margin-bottom: 24px;
+    position: relative;
+    background: #1a0a2e;
+  }
+
+  .dancing-cat-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .dancing-cat-container img.hidden {
+    display: none;
+  }
+
+  .giphy-iframe {
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .giphy-iframe.hidden {
+    display: none;
+  }
+
+  /* CSS FALLBACK DANCING CAT */
+  .css-dancing-cat {
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #FFE4B5, #FFDAB9);
+    position: relative;
+  }
+
+  .css-dancing-cat.active {
+    display: flex;
+  }
+
+  .css-cat-wrap {
+    animation: cssWiggle 0.5s infinite alternate ease-in-out;
+    transform-origin: bottom center;
+  }
+
+  .css-cat-body-main {
+    width: 90px;
+    height: 80px;
+    background: #F5A623;
+    border-radius: 50% 50% 45% 45%;
+    position: relative;
+    margin: 0 auto;
+    border: 3px solid #E09520;
+  }
+
+  .css-cat-head {
+    width: 70px;
+    height: 65px;
+    background: #F5A623;
+    border-radius: 50%;
+    position: absolute;
+    top: -45px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 3px solid #E09520;
+    z-index: 2;
+  }
+
+  .css-ear-l, .css-ear-r {
+    position: absolute;
+    top: -12px;
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 20px solid #F5A623;
+  }
+  .css-ear-l { left: 4px; transform: rotate(-10deg); }
+  .css-ear-r { right: 4px; transform: rotate(10deg); }
+
+  .css-ear-inner-l, .css-ear-inner-r {
+    position: absolute;
+    top: -6px;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 12px solid #FFB8C6;
+  }
+  .css-ear-inner-l { left: 9px; transform: rotate(-10deg); }
+  .css-ear-inner-r { right: 9px; transform: rotate(10deg); }
+
+  .css-face-eyes {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 14px;
+  }
+
+  .css-face-eye {
+    width: 12px;
+    height: 12px;
+    background: #2C1810;
+    border-radius: 50%;
+    position: relative;
+    animation: cssBlink 3s infinite;
+  }
+
+  .css-face-eye::after {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    right: 1px;
+  }
+
+  .css-face-mouth {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 10px;
+    border: 2.5px solid #2C1810;
+    border-top: none;
+    border-radius: 0 0 50% 50%;
+    background: #FF8FA3;
+  }
+
+  .css-paw {
+    position: absolute;
+    bottom: -8px;
+    width: 22px;
+    height: 22px;
+    background: #F5A623;
+    border-radius: 50%;
+    border: 2px solid #E09520;
+    animation: cssPawWave 0.4s infinite alternate;
+  }
+  .css-paw.left { left: 5px; animation-delay: 0s; }
+  .css-paw.right { right: 5px; animation-delay: 0.2s; }
+
+  .css-tail {
+    position: absolute;
+    bottom: 15px;
+    right: -15px;
+    width: 40px;
+    height: 12px;
+    background: #F5A623;
+    border-radius: 0 20px 20px 0;
+    border: 2px solid #E09520;
+    transform-origin: left center;
+    animation: cssTailWag 0.6s infinite alternate ease-in-out;
+  }
+
+  .css-sparkle {
+    position: absolute;
+    font-size: 16px;
+    animation: cssSparkle 1s infinite;
+  }
+  .css-sparkle:nth-child(1) { top: 10%; left: 15%; animation-delay: 0s; }
+  .css-sparkle:nth-child(2) { top: 15%; right: 15%; animation-delay: 0.3s; }
+  .css-sparkle:nth-child(3) { bottom: 20%; left: 20%; animation-delay: 0.6s; }
+  .css-sparkle:nth-child(4) { bottom: 15%; right: 20%; animation-delay: 0.9s; }
+  .css-sparkle:nth-child(5) { top: 40%; left: 8%; animation-delay: 0.15s; }
+  .css-sparkle:nth-child(6) { top: 40%; right: 8%; animation-delay: 0.45s; }
+
+  .css-music-note {
+    position: absolute;
+    font-size: 20px;
+    animation: cssMusicFloat 2s infinite;
+    opacity: 0;
+  }
+  .css-music-note:nth-child(7) { top: 5%; right: 25%; animation-delay: 0s; }
+  .css-music-note:nth-child(8) { top: 8%; left: 25%; animation-delay: 1s; }
+
+  @keyframes cssWiggle {
+    0% { transform: rotate(-8deg) translateY(0); }
+    100% { transform: rotate(8deg) translateY(-5px); }
+  }
+
+  @keyframes cssPawWave {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-12px) rotate(-15deg); }
+  }
+
+  @keyframes cssTailWag {
+    0% { transform: rotate(-20deg); }
+    100% { transform: rotate(20deg); }
+  }
+
+  @keyframes cssBlink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+  }
+
+  @keyframes cssSparkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  @keyframes cssMusicFloat {
+    0% { opacity: 0; transform: translateY(0) rotate(0deg); }
+    30% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-30px) rotate(20deg); }
+  }
+
+  .win-message-box {
+    background: rgba(255, 248, 240, 0.06);
+    border: 1px solid rgba(212, 160, 86, 0.25);
+    border-radius: 20px;
+    padding: 20px 24px;
+    max-width: 400px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.2s forwards;
+    margin-bottom: 16px;
+  }
+
+  .win-message {
+    font-family: 'Quicksand', sans-serif;
+    color: var(--cream);
+    font-size: clamp(13px, 3vw, 15px);
+    line-height: 1.8;
+  }
+
+  .win-message .love-line {
+    color: var(--caramel);
+    font-weight: 700;
+  }
+
+  .win-sign-off {
+    color: var(--pink);
+    font-size: clamp(16px, 4vw, 22px);
+    opacity: 0;
+    animation: fadeUp 0.8s 1.5s forwards;
+    margin-top: 8px;
+  }
+
+  /* Chocolate rain on win screen */
+  .choco-rain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    overflow: hidden;
+  }
+
+  .rain-choco {
+    position: absolute;
+    font-size: 28px;
+    animation: chocoFall linear infinite;
+    opacity: 0.8;
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes catBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes twinkle {
+    0% { opacity: 0.3; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes catchPop {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    50% { opacity: 1; transform: translateY(-30px) scale(1.3); }
+    100% { opacity: 0; transform: translateY(-60px) scale(0.8); }
+  }
+
+  @keyframes dancePulse {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.03) rotate(2deg); }
+    75% { transform: scale(1.03) rotate(-2deg); }
+  }
+
+  @keyframes chocoFall {
+    0% { transform: translateY(-40px) rotate(0deg); }
+    100% { transform: translateY(110vh) rotate(360deg); }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(-50%); }
+    25% { transform: translateX(-50%) translateX(-4px); }
+    75% { transform: translateX(-50%) translateX(4px); }
+  }
+
+  /* Mobile Controls */
+  .mobile-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    display: flex;
+    z-index: 15;
+  }
+
+  .mobile-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .control-hint {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,248,240,0.3);
+    font-family: 'Quicksand', sans-serif;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 15;
+    animation: fadeOut 3s 2s forwards;
+  }
+
+  @keyframes fadeOut {
+    to { opacity: 0; }
+  }
+
+  .ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 16px;
+    background: linear-gradient(180deg, #2C1810, #1A0E0A);
+    z-index: 4;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== INTRO SCREEN ===== -->
+<div id="intro-screen">
+  <div class="intro-date">9 Feb · Chocolate Day 🍫</div>
+  <div class="intro-title">Help Cat-o Catch<br>Vanu's Chocolates!</div>
+  <div class="intro-subtitle">Vanu LOVES dark chocolate... but veggies keep falling too! 😼</div>
+  <div class="intro-cat-emoji">🐱</div>
+  <div class="intro-mission">
+    <p>
+      Catch <span class="highlight">5 dark chocolates</span> 🍫 to win!<br>
+      Avoid the veggies — Cat-o hates those! 🥦
+    </p>
+  </div>
+  <div class="intro-items-preview">
+    <div class="preview-item good">🍫<span class="label">+20 ✓</span></div>
+    <div class="preview-item bad">🥦<span class="label">nope</span></div>
+    <div class="preview-item bad">🍆<span class="label">nope</span></div>
+    <div class="preview-item bad">🥒<span class="label">nope</span></div>
+    <div class="preview-item bad">🫑<span class="label">nope</span></div>
+  </div>
+  <button class="play-btn" onclick="startGame()">🐾 Let's Go!</button>
+</div>
+
+<!-- ===== GAME SCREEN ===== -->
+<div id="game-screen">
+  <div class="game-bg-stars" id="stars-container"></div>
+  
+  <div class="hud">
+    <div class="score-display">
+      <span class="score-label">Score</span>
+      <span class="score-value" id="score">0</span>
+      <span class="score-target">/ 100</span>
+    </div>
+    <div class="choco-progress" id="choco-progress">
+      <div class="choco-dot" id="dot-1"></div>
+      <div class="choco-dot" id="dot-2"></div>
+      <div class="choco-dot" id="dot-3"></div>
+      <div class="choco-dot" id="dot-4"></div>
+      <div class="choco-dot" id="dot-5"></div>
+    </div>
+  </div>
+
+  <div class="game-area" id="game-area">
+    <!-- Cat Player -->
+    <div class="cat-player" id="cat-player">
+      <div class="cat-body">
+        <div class="cat-face">
+          <div class="cat-ear left"></div>
+          <div class="cat-ear right"></div>
+          <div class="cat-eyes">
+            <div class="cat-eye"></div>
+            <div class="cat-eye"></div>
+          </div>
+          <div class="cat-nose"></div>
+          <div class="cat-mouth"></div>
+          <div class="cat-whisker l1"></div>
+          <div class="cat-whisker l2"></div>
+          <div class="cat-whisker r1"></div>
+          <div class="cat-whisker r2"></div>
+        </div>
+        <div class="cat-basket"></div>
+      </div>
+    </div>
+    <div class="ground"></div>
+  </div>
+
+  <div class="control-hint" id="control-hint">← Tap left/right or use arrow keys →</div>
+  <div class="mobile-controls">
+    <button class="mobile-btn" id="btn-left"></button>
+    <button class="mobile-btn" id="btn-right"></button>
+  </div>
+</div>
+
+<!-- ===== WIN SCREEN ===== -->
+<div id="win-screen">
+  <div class="win-bg"></div>
+  <div class="choco-rain" id="choco-rain"></div>
+  <div class="win-content">
+    <div class="win-title">Cat-o Wins! 🍫🎉</div>
+    <div class="win-subtitle">All 5 dark chocolates caught for Vanu!</div>
+    <div class="dancing-cat-container">
+      <img src="https://media.giphy.com/media/pAHAgWYYjWIE9DNLcC/giphy.gif" alt="Dancing cats" id="dancing-cat-img"
+        crossorigin="anonymous"
+        onerror="tryNextGif(this)">
+      <iframe id="giphy-fallback" class="giphy-iframe hidden"
+        src="" 
+        width="100%" height="100%" 
+        style="position:absolute;inset:0;border:none;pointer-events:none;" 
+        allowFullScreen></iframe>
+      <div class="css-dancing-cat" id="css-cat-fallback">
+        <div class="css-sparkle">✨</div>
+        <div class="css-sparkle">💛</div>
+        <div class="css-sparkle">✨</div>
+        <div class="css-sparkle">💛</div>
+        <div class="css-sparkle">⭐</div>
+        <div class="css-sparkle">⭐</div>
+        <div class="css-music-note">🎵</div>
+        <div class="css-music-note">🎶</div>
+        <div class="css-cat-wrap">
+          <div class="css-cat-body-main">
+            <div class="css-cat-head">
+              <div class="css-ear-l"></div>
+              <div class="css-ear-r"></div>
+              <div class="css-ear-inner-l"></div>
+              <div class="css-ear-inner-r"></div>
+              <div class="css-face-eyes">
+                <div class="css-face-eye"></div>
+                <div class="css-face-eye"></div>
+              </div>
+              <div class="css-face-mouth"></div>
+            </div>
+            <div class="css-paw left"></div>
+            <div class="css-paw right"></div>
+            <div class="css-tail"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="win-message-box">
+      <p class="win-message">
+        My dearest Vanu 🐱,<br><br>
+        You know how you can never say no to dark chocolate?<br>
+        <span class="love-line">Well, I can never say no to you.</span><br><br>
+        You're sweeter than the darkest, richest, most expensive chocolate in the world.
+        And just like dark chocolate, you're a little intense, a little bold,
+        and <span class="love-line">absolutely irresistible.</span><br><br>
+        So here's a lifetime supply of love from your Cat-o —
+        no expiry date, no calories, just pure sweetness. 🍫💕<br><br>
+        <span class="love-line">Happy Chocolate Day, my Vanu.</span>
+      </p>
+    </div>
+    <div class="win-sign-off">Forever your Cat-o, Dehit 🐱♥</div>
+  </div>
+</div>
+
+<script>
+  // ===== GAME STATE =====
+  let catX = 50; // percentage
+  let score = 0;
+  let chocosCaught = 0;
+  let items = [];
+  let gameRunning = false;
+  let lastFrame = 0;
+  let spawnTimer = 0;
+  let moveLeft = false;
+  let moveRight = false;
+  const catSpeed = 55; // percent per second
+  const CAT_WIDTH_PX = 80;
+
+  const ITEMS = [
+    { emoji: '🍫', type: 'good', label: '+20!' },
+    { emoji: '🥦', type: 'bad', label: 'Eww! 🥦' },
+    { emoji: '🍆', type: 'bad', label: 'Yuck! 🍆' },
+    { emoji: '🥒', type: 'bad', label: 'Blegh! 🥒' },
+    { emoji: '🫑', type: 'bad', label: 'Nope! 🫑' },
+  ];
+
+  // Elements
+  const catEl = document.getElementById('cat-player');
+  const gameArea = document.getElementById('game-area');
+  const scoreEl = document.getElementById('score');
+  const introScreen = document.getElementById('intro-screen');
+  const gameScreen = document.getElementById('game-screen');
+  const winScreen = document.getElementById('win-screen');
+
+  // ===== STARS =====
+  function createStars() {
+    const container = document.getElementById('stars-container');
+    for (let i = 0; i < 60; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 60 + '%';
+      star.style.animationDelay = Math.random() * 3 + 's';
+      star.style.width = star.style.height = (Math.random() * 2 + 1) + 'px';
+      container.appendChild(star);
+    }
+  }
+
+  // ===== START GAME =====
+  function startGame() {
+    introScreen.classList.add('hidden');
+    setTimeout(() => {
+      gameScreen.classList.add('active');
+      gameRunning = true;
+      catX = 50;
+      score = 0;
+      chocosCaught = 0;
+      updateHUD();
+      createStars();
+      requestAnimationFrame(gameLoop);
+    }, 600);
+  }
+
+  // ===== GAME LOOP =====
+  function gameLoop(timestamp) {
+    if (!gameRunning) return;
+    
+    const dt = lastFrame ? (timestamp - lastFrame) / 1000 : 0.016;
+    lastFrame = timestamp;
+
+    // Move cat
+    if (moveLeft) catX -= catSpeed * dt;
+    if (moveRight) catX += catSpeed * dt;
+    catX = Math.max(5, Math.min(95, catX));
+    catEl.style.left = catX + '%';
+
+    // Spawn items
+    spawnTimer += dt;
+    const spawnRate = 0.7 + Math.random() * 0.5;
+    if (spawnTimer >= spawnRate) {
+      spawnTimer = 0;
+      spawnItem();
+    }
+
+    // Update items
+    const areaH = gameArea.clientHeight;
+    const areaW = gameArea.clientWidth;
+    const catRect = catEl.getBoundingClientRect();
+    const areaRect = gameArea.getBoundingClientRect();
+
+    for (let i = items.length - 1; i >= 0; i--) {
+      const item = items[i];
+      item.y += item.speed * dt;
+      item.el.style.top = item.y + 'px';
+      item.el.style.left = item.x + '%';
+
+      // Check collision with cat
+      const itemRect = item.el.getBoundingClientRect();
+      if (
+        itemRect.bottom >= catRect.top + 10 &&
+        itemRect.top <= catRect.bottom - 10 &&
+        itemRect.right >= catRect.left + 10 &&
+        itemRect.left <= catRect.right - 10 &&
+        item.y < areaH - 50
+      ) {
+        handleCatch(item, i);
+        continue;
+      }
+
+      // Remove if off screen
+      if (item.y > areaH + 40) {
+        item.el.remove();
+        items.splice(i, 1);
+      }
+    }
+
+    requestAnimationFrame(gameLoop);
+  }
+
+  // ===== SPAWN =====
+  function spawnItem() {
+    // Weight chocolate slightly higher so it's not too frustrating
+    const weights = [0.35, 0.1625, 0.1625, 0.1625, 0.1625];
+    let r = Math.random();
+    let idx = 0;
+    let cum = 0;
+    for (let i = 0; i < weights.length; i++) {
+      cum += weights[i];
+      if (r <= cum) { idx = i; break; }
+    }
+
+    const data = ITEMS[idx];
+    const el = document.createElement('div');
+    el.className = 'falling-item';
+    el.textContent = data.emoji;
+    
+    const x = 8 + Math.random() * 84;
+    const speed = 160 + Math.random() * 100;
+    
+    el.style.left = x + '%';
+    el.style.top = '-40px';
+    gameArea.appendChild(el);
+
+    items.push({
+      el, x, y: -40, speed,
+      type: data.type,
+      label: data.label,
+      emoji: data.emoji
+    });
+  }
+
+  // ===== CATCH =====
+  function handleCatch(item, index) {
+    const rect = item.el.getBoundingClientRect();
+    const areaRect = gameArea.getBoundingClientRect();
+    const effX = rect.left - areaRect.left + rect.width / 2;
+    const effY = rect.top - areaRect.top;
+
+    item.el.remove();
+    items.splice(index, 1);
+
+    if (item.type === 'good') {
+      score += 20;
+      chocosCaught++;
+      showCatchEffect(effX, effY, '+20 🍫', 'good');
+      updateHUD();
+
+      if (chocosCaught >= 5) {
+        gameRunning = false;
+        setTimeout(showWinScreen, 600);
+      }
+    } else {
+      showCatchEffect(effX, effY, item.label, 'bad');
+      // Shake cat
+      catEl.style.animation = 'shake 0.3s ease';
+      setTimeout(() => catEl.style.animation = '', 300);
+    }
+  }
+
+  function showCatchEffect(x, y, text, type) {
+    const el = document.createElement('div');
+    el.className = 'catch-effect ' + type;
+    el.textContent = text;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    gameArea.appendChild(el);
+    setTimeout(() => el.remove(), 700);
+  }
+
+  function updateHUD() {
+    scoreEl.textContent = score;
+    scoreEl.classList.add('bump');
+    setTimeout(() => scoreEl.classList.remove('bump'), 150);
+
+    for (let i = 1; i <= 5; i++) {
+      const dot = document.getElementById('dot-' + i);
+      if (i <= chocosCaught) {
+        dot.classList.add('filled');
+        dot.textContent = '🍫';
+      }
+    }
+  }
+
+  // ===== WIN SCREEN =====
+  function showWinScreen() {
+    // Clean up game items
+    items.forEach(i => i.el.remove());
+    items = [];
+    
+    winScreen.classList.add('active');
+    createChocoRain();
+  }
+
+  function createChocoRain() {
+    const container = document.getElementById('choco-rain');
+    const chocoEmojis = ['🍫', '🍫', '🍫', '🍬', '🍫', '🍩', '🍫'];
+    
+    for (let i = 0; i < 35; i++) {
+      const choco = document.createElement('div');
+      choco.className = 'rain-choco';
+      choco.textContent = chocoEmojis[Math.floor(Math.random() * chocoEmojis.length)];
+      choco.style.left = Math.random() * 100 + '%';
+      choco.style.animationDuration = (3 + Math.random() * 4) + 's';
+      choco.style.animationDelay = Math.random() * 5 + 's';
+      choco.style.fontSize = (20 + Math.random() * 16) + 'px';
+      container.appendChild(choco);
+    }
+  }
+
+  // ===== CONTROLS =====
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft' || e.key === 'a') moveLeft = true;
+    if (e.key === 'ArrowRight' || e.key === 'd') moveRight = true;
+  });
+  document.addEventListener('keyup', e => {
+    if (e.key === 'ArrowLeft' || e.key === 'a') moveLeft = false;
+    if (e.key === 'ArrowRight' || e.key === 'd') moveRight = false;
+  });
+
+  // Touch / Mobile
+  const btnLeft = document.getElementById('btn-left');
+  const btnRight = document.getElementById('btn-right');
+
+  btnLeft.addEventListener('touchstart', e => { e.preventDefault(); moveLeft = true; });
+  btnLeft.addEventListener('touchend', e => { e.preventDefault(); moveLeft = false; });
+  btnLeft.addEventListener('mousedown', () => moveLeft = true);
+  btnLeft.addEventListener('mouseup', () => moveLeft = false);
+
+  btnRight.addEventListener('touchstart', e => { e.preventDefault(); moveRight = true; });
+  btnRight.addEventListener('touchend', e => { e.preventDefault(); moveRight = false; });
+  btnRight.addEventListener('mousedown', () => moveRight = true);
+  btnRight.addEventListener('mouseup', () => moveRight = false);
+
+  // Also support dragging / swiping
+  let touchStartX = null;
+  gameArea.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+    const w = window.innerWidth;
+    if (touchStartX < w / 2) {
+      moveLeft = true; moveRight = false;
+    } else {
+      moveRight = true; moveLeft = false;
+    }
+  }, { passive: true });
+
+  gameArea.addEventListener('touchmove', e => {
+    const x = e.touches[0].clientX;
+    const w = window.innerWidth;
+    if (x < w / 2) {
+      moveLeft = true; moveRight = false;
+    } else {
+      moveRight = true; moveLeft = false;
+    }
+  }, { passive: true });
+
+  gameArea.addEventListener('touchend', () => {
+    moveLeft = false;
+    moveRight = false;
+  });
+
+  // GIF fallback chain - ALL REAL CAT GIFS from Giphy
+  const gifSources = [
+    'https://media.giphy.com/media/pAHAgWYYjWIE9DNLcC/giphy.gif',  // two cats dancing
+    'https://media.giphy.com/media/vtqHQnp9rylMeDEw7s/giphy.gif',  // white cat happy dance
+    'https://media.giphy.com/media/t9aSNTJ4YSJFUW0dkB/giphy.gif',  // orange cat wiggle
+    'https://media.giphy.com/media/xJjs8eGVbjNYY/giphy.gif',       // cat dance
+    'https://media1.tenor.com/m/BwArbEoCbncAAAAd/happy-dance-cat.gif', // tenor fallback
+  ];
+  let gifAttempt = 0;
+  
+  function tryNextGif(imgEl) {
+    gifAttempt++;
+    if (gifAttempt < gifSources.length) {
+      imgEl.src = gifSources[gifAttempt];
+    } else {
+      // All direct GIFs failed — try Giphy iframe embed (nuclear option)
+      imgEl.classList.add('hidden');
+      const iframe = document.getElementById('giphy-fallback');
+      iframe.src = 'https://giphy.com/embed/pAHAgWYYjWIE9DNLcC';
+      iframe.classList.remove('hidden');
+      
+      // If even iframe fails after 5 seconds, show CSS cat
+      setTimeout(() => {
+        try {
+          // Check if iframe loaded
+          if (!iframe.contentWindow || iframe.contentDocument === null) {
+            throw new Error('blocked');
+          }
+        } catch(e) {
+          iframe.classList.add('hidden');
+          document.getElementById('css-cat-fallback').classList.add('active');
+        }
+      }, 5000);
+    }
+  }
+
+  // Preload first GIF
+  const preload = new Image();
+  preload.src = gifSources[0];
+</script>
+
+</body>
+</html>
